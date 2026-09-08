@@ -126,7 +126,8 @@ export function contentProviderSync(startup = false, remainingOnly = false) {
     const providers = [
         { providerId: "planningcenter" as ContentProviderId, scope: "services", data: get(contentProviderData).planningcenter?.syncFolderIds || [], autoSync: get(contentProviderData).planningcenter?.autoSync !== false },
         { providerId: "churchApps" as ContentProviderId, scope: "plans", data: { shows: get(shows), categories: get(contentProviderData).churchApps?.syncCategories || [] } },
-        { providerId: "amazinglife" as ContentProviderId, scope: "openid profile email" }
+        { providerId: "amazinglife" as ContentProviderId, scope: "openid profile email" },
+        { providerId: "onstage" as ContentProviderId, scope: "presenter", autoSync: get(contentProviderData).onstage?.autoSync !== false }
     ]
 
     providers.forEach(({ providerId, scope, data, autoSync }) => {

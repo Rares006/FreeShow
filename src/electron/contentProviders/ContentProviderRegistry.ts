@@ -5,6 +5,7 @@ import type { ContentProvider } from "./base/ContentProvider"
 import { ContentProviderFactory } from "./base/ContentProvider"
 import type { ContentProviderId } from "./base/types"
 import { ChurchAppsProvider } from "./churchApps/ChurchAppsProvider"
+import { OnStageProvider } from "./onStage/OnStageProvider"
 import { PlanningCenterProvider } from "./planningCenter/PlanningCenterProvider"
 import type { PCOFolderTreeNode } from "./planningCenter/request"
 import type { PCOLiveData } from "./planningCenter/live"
@@ -26,6 +27,7 @@ export class ContentProviderRegistry {
         ContentProviderFactory.register("churchApps", ChurchAppsProvider)
         ContentProviderFactory.register("planningcenter", PlanningCenterProvider)
         ContentProviderFactory.register("amazinglife", AmazingLifeProvider)
+        ContentProviderFactory.register("onstage", OnStageProvider)
         ContentProviderFactory.register("canva", CanvaProvider)
 
         this.initialized = true
