@@ -120,7 +120,9 @@
                 }
             }
 
-            sendMain(Main.PROVIDER_LOAD_SERVICES, { providerId, cloudOnly: cloudOnly[providerId] || false })
+            // OnStage reads its formatting settings from here, so the live store value is used
+            const providerSettings = providerId === "onstage" ? $contentProviderData.onstage || {} : undefined
+            sendMain(Main.PROVIDER_LOAD_SERVICES, { providerId, cloudOnly: cloudOnly[providerId] || false, data: providerSettings })
         } else {
             if ($cloudSyncData.enabled && providerId === $cloudSyncData.id) {
                 // should remain connected to cloud
@@ -158,6 +160,21 @@
     }
 
     $: projectTemplateOptions = [{ value: "", label: translateText("main.none") }, ...sortByName(keysToID($projectTemplates)).map(({ id, name }) => ({ value: id, label: name }))]
+
+    $: syncModeOptions = [
+        { value: "", label: "Update existing songs too" },
+        { value: "new", label: "Only add new songs" }
+    ]
+
+    $: linesPerSlideOptions = [
+        { value: "0", label: "Keep from OnStage" },
+        { value: "1", label: "1" },
+        { value: "2", label: "2" },
+        { value: "3", label: "3" },
+        { value: "4", label: "4" },
+        { value: "5", label: "5" },
+        { value: "6", label: "6" }
+    ]
 
     $: providerOriginOptions = [
         { value: "", label: "Ask when existing show is found" },
@@ -360,6 +377,20 @@
     <MaterialToggleSwitch label="settings.auto_sync_startup" checked={$contentProviderData.onstage?.autoSync !== false} on:change={(e) => updateProvider("onstage", "autoSync", e.detail)} />
 
     <MaterialDropdown label="Song origin" options={providerOriginOptions} value={$contentProviderData.onstage?.songOrigin || ""} on:change={(e) => updateProvider("onstage", "songOrigin", e.detail)} />
+
+    <MaterialDropdown label="Sync mode" options={syncModeOptions} value={$contentProviderData.onstage?.syncMode || ""} on:change={(e) => updateProvider("onstage", "syncMode", e.detail)} />
+
+    <MaterialDropdown label="Lines per slide" options={linesPerSlideOptions} value={String($contentProviderData.onstage?.linesPerSlide || 0)} on:change={(e) => updateProvider("onstage", "linesPerSlide", Number(e.detail))} />
+
+    <MaterialNumberInput label="Max characters per line" value={$contentProviderData.onstage?.maxLineLength || 0} defaultValue={0} min={0} max={200} placeholder={translateText("main.none")} hideWhenZero on:change={(e) => updateProvider("onstage", "maxLineLength", e.detail)} />
+
+    <MaterialToggleSwitch label="Merge identical sections" checked={$contentProviderData.onstage?.mergeIdenticalSections !== false} on:change={(e) => updateProvider("onstage", "mergeIdenticalSections", e.detail)} />
+
+    <MaterialToggleSwitch label="Ask about new arrangement" checked={$contentProviderData.onstage?.askArrangement !== false} on:change={(e) => updateProvider("onstage", "askArrangement", e.detail)} />
+
+    <Tip
+        value="Lines per slide and max characters per line only apply to songs imported from OnStage. A line that does not fit is split into whole words, as close to the middle as possible. 'Ask about new arrangement' offers to add the OnStage version as an extra arrangement instead of replacing the local song, and only asks when the structure actually differs. A song scheduled with different structures in several services keeps one arrangement per service, so one service no longer overwrites the others. With 'Only add new songs' a song that already exists locally is never touched by a sync — right click it in the song list to reload just that one from OnStage."
+    />
 {/if}
 
 <!-- OBS Studio Controller -->
